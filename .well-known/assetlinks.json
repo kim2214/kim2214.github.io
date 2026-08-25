@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.kimdev.petmap",
+      "sha256_cert_fingerprints": [
+        "AF:DF:BB:61:A6:C5:3A:EA:9E:1D:23:6E:6F:E1:C5:1E:23:D1:A3:20:21:0C:CE:5B:AE:40:72:37:04:46:B4:AB"
+      ]
+    }
+  }
+]

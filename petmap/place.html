@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>펫맵에서 장소 보기</title>
+  <meta name="description" content="펫맵(PetMap) 앱에서 공유된 반려동물 동반 가능 장소입니다." />
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
+        "Malgun Gothic", sans-serif;
+      line-height: 1.7; color: #1a1c18; background: #fbf5e9;
+      margin: 0; padding: 24px 16px 64px;
+    }
+    main { max-width: 520px; margin: 0 auto; background: #fffdf6;
+      border-radius: 16px; padding: 32px 24px; box-shadow: 0 1px 6px rgba(0,0,0,.06); text-align: center; }
+    .paw { font-size: 2.4rem; margin: 0; }
+    h1 { font-size: 1.4rem; margin: 8px 0 4px; color: #2c5a31; word-break: keep-all; }
+    p { margin: 6px 0; color: #5b6157; }
+    .actions { display: grid; gap: 10px; margin-top: 24px; }
+    .btn {
+      display: block; padding: 14px 18px; border-radius: 12px; text-decoration: none;
+      font-weight: 600; font-size: 1rem;
+    }
+    .primary { background: #22a75a; color: #fff; }
+    .secondary { background: #f0f4ea; color: #2c5a31; }
+    .hint { font-size: .85rem; color: #7a8076; margin-top: 20px; }
+    a.home { color: #3e7d44; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="paw">🐾</p>
+    <h1 id="name">펫맵에서 공유된 장소</h1>
+    <p id="coords"></p>
+    <p>반려동물과 함께 갈 수 있는 곳을 펫맵 앱에서 확인해 보세요.</p>
+    <div class="actions">
+      <a id="open" class="btn primary" href="https://play.google.com/store/apps/details?id=com.kimdev.petmap">펫맵 앱에서 열기</a>
+      <a id="map" class="btn secondary" href="#" hidden>지도 앱에서 위치 보기</a>
+      <a class="btn secondary" href="https://play.google.com/store/apps/details?id=com.kimdev.petmap">Google Play에서 설치</a>
+    </div>
+    <p class="hint">앱이 설치돼 있으면 이 링크가 바로 앱에서 열립니다. 열리지 않으면 앱을 최신 버전으로 업데이트해 주세요.</p>
+    <p><a class="home" href="/">kimdev0821 홈</a></p>
+  </main>
+  <script>
+    // 장소 id 는 "이름_위도_경도" 형태 (앱 데이터와 동일). 이름과 좌표를 뽑아 안내에 쓴다.
+    (function () {
+      var id = new URLSearchParams(location.search).get('id');
+      if (!id) return;
+      var parts = id.split('_');
+      var lng = parseFloat(parts.pop());
+      var lat = parseFloat(parts.pop());
+      var name = parts.join('_');
+      if (name) {
+        document.getElementById('name').textContent = name;
+        document.title = name + ' · 펫맵';
+      }
+      if (!isNaN(lat) && !isNaN(lng)) {
+        document.getElementById('coords').textContent = lat.toFixed(5) + ', ' + lng.toFixed(5);
+        var map = document.getElementById('map');
+        map.href = 'geo:' + lat + ',' + lng + '?q=' + lat + ',' + lng + '(' + encodeURIComponent(name || '펫맵 장소') + ')';
+        map.hidden = false;
+      }
+      // Android Chrome: 앱이 있으면 열고, 없으면 Play 스토어로 폴백하는 intent 링크
+      if (/Android/i.test(navigator.userAgent)) {
+        document.getElementById('open').href =
+          'intent://kim2214.github.io/petmap/place?id=' + encodeURIComponent(id) +
+          '#Intent;scheme=https;package=com.kimdev.petmap;' +
+          'S.browser_fallback_url=' + encodeURIComponent('https://play.google.com/store/apps/details?id=com.kimdev.petmap') + ';end';
+      }
+    })();
+  </script>
+</body>
+</html>
